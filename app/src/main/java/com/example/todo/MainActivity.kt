@@ -15,13 +15,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.CleaningServices
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Dining
 import androidx.compose.material.icons.filled.Face
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.sp
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,10 +40,14 @@ data class MyCheckList(
     val myCheckListElements: MutableList<MyCheckListElement>  // Use MutableList for state updates
 )
 
-data class MyCheckListElement(
+class MyCheckListElement(
     val text: String,
-    var checked: Boolean,
-)
+    checked: Boolean,
+) {
+    var checked by mutableStateOf(checked)
+}
+
+// example list fra Tips Oblig2
 
 class DataSource {
     fun loadDemoCheckLists(): List<MyCheckList> {
@@ -62,7 +68,7 @@ class DataSource {
             ),
             MyCheckList(
                 name = "Husvask",
-                icon = Icons.Filled.ShoppingCart,
+                icon = Icons.Filled.CleaningServices,
                 myCheckListElements = mutableListOf(
                     MyCheckListElement("Skriv søknad", false),
                     MyCheckListElement("Send søknad", true),
@@ -74,7 +80,7 @@ class DataSource {
             ),
             MyCheckList(
                 name = "Studieplan",
-                icon = Icons.Filled.LocationOn,
+                icon = Icons.Filled.School,
                 myCheckListElements = mutableListOf(
                     MyCheckListElement("Husk å vaske kjøkkenet", false),
                     MyCheckListElement("Husk å vaske badet", true),
@@ -84,7 +90,7 @@ class DataSource {
             ),
             MyCheckList(
                 name = "Middagsplan",
-                icon = Icons.Filled.Home,
+                icon = Icons.Filled.Dining,
                 myCheckListElements = mutableListOf(
                     MyCheckListElement("Gjør matteoppgaver", true),
                     MyCheckListElement("Gjør fysikkoppgaver", true),
@@ -94,7 +100,7 @@ class DataSource {
             ),
             MyCheckList(
                 name = "Handleliste",
-                icon = Icons.Filled.AccountCircle,
+                icon = Icons.Filled.ShoppingCart,
                 myCheckListElements = mutableListOf(
                     MyCheckListElement("Lag middag", true),
                     MyCheckListElement("Spis middag", true),
@@ -111,7 +117,6 @@ class DataSource {
 fun ChecklistApp() {
     var isTwoColumnView by remember { mutableStateOf(false) }
     var checklists by remember { mutableStateOf(DataSource().loadDemoCheckLists()) }
-
     var listCounter by remember { mutableIntStateOf(checklists.size) }
     var checkedCounter by remember {
         mutableIntStateOf(checklists.sumOf { it.myCheckListElements.count { item -> item.checked } })
@@ -119,8 +124,15 @@ fun ChecklistApp() {
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("To kolonner")
-            Switch(checked = isTwoColumnView, onCheckedChange = { isTwoColumnView = it })
+            Text(text = "Vis som to kolonner",
+                modifier = Modifier.padding(8.dp),
+                fontSize = 16.sp
+            )
+            Switch(
+                modifier = Modifier.scale(0.7f),
+                checked = isTwoColumnView,
+                onCheckedChange = { isTwoColumnView = it },
+                )
         }
 
         Text("Lister: $listCounter | Fullførte oppgaver: $checkedCounter")
@@ -173,7 +185,7 @@ fun ChecklistView(
         modifier = Modifier
             .fillMaxWidth()
             .height(200.dp) // Fixed height for scrolling
-            .padding(8.dp)
+            .padding(6.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
@@ -188,7 +200,7 @@ fun ChecklistView(
                     Icon(imageVector = Icons.Filled.Delete, contentDescription = "Slett liste")
                 }
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(1.dp))
             LazyColumn {
                 items(checklist.myCheckListElements.size) { index ->
                     val element = checklist.myCheckListElements[index]
@@ -201,12 +213,17 @@ fun ChecklistView(
                                 element.checked = !element.checked
                                 onCheckedChange()
                             }
-                            .padding(vertical = 4.dp)
+//                            .padding(vertical = 2.dp)
                     ) {
-                        Checkbox(checked = element.checked, onCheckedChange = {
-                            element.checked = it
-                            onCheckedChange()
-                        })
+                        Switch(
+                            modifier = Modifier.scale(0.7f),
+                            checked = element.checked,
+                            onCheckedChange = {
+                                element.checked = it
+                                onCheckedChange()
+                            }
+                        )
+
                         Text(text = element.text, style = MaterialTheme.typography.bodyMedium)
                     }
                 }
