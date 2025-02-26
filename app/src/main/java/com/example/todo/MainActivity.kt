@@ -19,10 +19,12 @@ import androidx.compose.material.icons.filled.CleaningServices
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Dining
 import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.filled.School
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 
 class MainActivity : ComponentActivity() {
@@ -49,69 +51,7 @@ class MyCheckListElement(
 
 // example list fra Tips Oblig2
 
-class DataSource {
-    fun loadDemoCheckLists(): List<MyCheckList> {
-        return listOf(
-            MyCheckList(
-                name = "Min todo-liste",
-                icon = Icons.Filled.Face,
-                myCheckListElements = mutableListOf(
-                    MyCheckListElement("Kjøp melk", false),
-                    MyCheckListElement("Kjøp brød", true),
-                    MyCheckListElement("Kjøp smør", false),
-                    MyCheckListElement("Kjøp ost", true),
-                    MyCheckListElement("Kjøp skinke", false),
-                    MyCheckListElement("Kjøp syltetøy", true),
-                    MyCheckListElement("Kjøp knekkebrød", false),
-                    MyCheckListElement("Kjøp kaviar", true)
-                )
-            ),
-            MyCheckList(
-                name = "Husvask",
-                icon = Icons.Filled.CleaningServices,
-                myCheckListElements = mutableListOf(
-                    MyCheckListElement("Skriv søknad", false),
-                    MyCheckListElement("Send søknad", true),
-                    MyCheckListElement("Få jobb", false),
-                    MyCheckListElement("Jobb hardt", true),
-                    MyCheckListElement("Få lønn", false),
-                    MyCheckListElement("Kjøp hus", true)
-                )
-            ),
-            MyCheckList(
-                name = "Studieplan",
-                icon = Icons.Filled.School,
-                myCheckListElements = mutableListOf(
-                    MyCheckListElement("Husk å vaske kjøkkenet", false),
-                    MyCheckListElement("Husk å vaske badet", true),
-                    MyCheckListElement("Husk å vaske stua", false),
-                    MyCheckListElement("Husk å vaske soverommet", true)
-                )
-            ),
-            MyCheckList(
-                name = "Middagsplan",
-                icon = Icons.Filled.Dining,
-                myCheckListElements = mutableListOf(
-                    MyCheckListElement("Gjør matteoppgaver", true),
-                    MyCheckListElement("Gjør fysikkoppgaver", true),
-                    MyCheckListElement("Gjør kjemioppgaver", true),
-                    MyCheckListElement("Gjør biooppgaver", true)
-                )
-            ),
-            MyCheckList(
-                name = "Handleliste",
-                icon = Icons.Filled.ShoppingCart,
-                myCheckListElements = mutableListOf(
-                    MyCheckListElement("Lag middag", true),
-                    MyCheckListElement("Spis middag", true),
-                    MyCheckListElement("Vask opp", true),
-                    MyCheckListElement("Gå tur", true),
-                    MyCheckListElement("Se på TV", true)
-                )
-            )
-        )
-    }
-}
+
 
 @Composable
 fun ChecklistApp() {
@@ -123,16 +63,38 @@ fun ChecklistApp() {
     }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Vis som to kolonner",
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Filled.House,
+                contentDescription = "Header icon",
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+//                modifier = Modifier.fillMaxWidth(),
+                text = "MineHuskelister",
+                fontSize = 22.sp,
+                textAlign = TextAlign.Center
+            )
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Vis som to kolonner",
                 modifier = Modifier.padding(8.dp),
                 fontSize = 16.sp
             )
             Switch(
                 modifier = Modifier.scale(0.7f),
                 checked = isTwoColumnView,
-                onCheckedChange = { isTwoColumnView = it },
-                )
+                onCheckedChange = { isTwoColumnView = it }
+            )
         }
 
         Text("Lister: $listCounter | Fullførte oppgaver: $checkedCounter")
@@ -229,5 +191,69 @@ fun ChecklistView(
                 }
             }
         }
+    }
+}
+
+class DataSource {
+    fun loadDemoCheckLists(): List<MyCheckList> {
+        return listOf(
+            MyCheckList(
+                name = "Min todo-liste",
+                icon = Icons.Filled.Face,
+                myCheckListElements = mutableListOf(
+                    MyCheckListElement("Kjøp melk", false),
+                    MyCheckListElement("Kjøp brød", true),
+                    MyCheckListElement("Kjøp smør", false),
+                    MyCheckListElement("Kjøp ost", true),
+                    MyCheckListElement("Kjøp skinke", false),
+                    MyCheckListElement("Kjøp syltetøy", true),
+                    MyCheckListElement("Kjøp knekkebrød", false),
+                    MyCheckListElement("Kjøp kaviar", true)
+                )
+            ),
+            MyCheckList(
+                name = "Husvask",
+                icon = Icons.Filled.CleaningServices,
+                myCheckListElements = mutableListOf(
+                    MyCheckListElement("Skriv søknad", false),
+                    MyCheckListElement("Send søknad", true),
+                    MyCheckListElement("Få jobb", false),
+                    MyCheckListElement("Jobb hardt", true),
+                    MyCheckListElement("Få lønn", false),
+                    MyCheckListElement("Kjøp hus", true)
+                )
+            ),
+            MyCheckList(
+                name = "Studieplan",
+                icon = Icons.Filled.School,
+                myCheckListElements = mutableListOf(
+                    MyCheckListElement("Husk å vaske kjøkkenet", false),
+                    MyCheckListElement("Husk å vaske badet", true),
+                    MyCheckListElement("Husk å vaske stua", false),
+                    MyCheckListElement("Husk å vaske soverommet", true)
+                )
+            ),
+            MyCheckList(
+                name = "Middagsplan",
+                icon = Icons.Filled.Dining,
+                myCheckListElements = mutableListOf(
+                    MyCheckListElement("Gjør matteoppgaver", true),
+                    MyCheckListElement("Gjør fysikkoppgaver", true),
+                    MyCheckListElement("Gjør kjemioppgaver", true),
+                    MyCheckListElement("Gjør biooppgaver", true)
+                )
+            ),
+            MyCheckList(
+                name = "Handleliste",
+                icon = Icons.Filled.ShoppingCart,
+                myCheckListElements = mutableListOf(
+                    MyCheckListElement("Lag middag", true),
+                    MyCheckListElement("Spis middag", true),
+                    MyCheckListElement("Vask opp", true),
+                    MyCheckListElement("Gå tur", true),
+                    MyCheckListElement("Se på TV", true)
+                )
+            )
+        )
     }
 }
