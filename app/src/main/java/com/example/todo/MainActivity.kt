@@ -18,6 +18,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CleaningServices
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Dining
+import androidx.compose.material.icons.filled.DoneAll
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.House
 import androidx.compose.material.icons.filled.School
@@ -74,7 +76,6 @@ fun ChecklistApp() {
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-//                modifier = Modifier.fillMaxWidth(),
                 text = "MineHuskelister",
                 fontSize = 22.sp,
                 textAlign = TextAlign.Center
@@ -91,7 +92,7 @@ fun ChecklistApp() {
                 fontSize = 16.sp
             )
             Switch(
-                modifier = Modifier.scale(0.7f),
+                modifier = Modifier.scale(0.6f),
                 checked = isTwoColumnView,
                 onCheckedChange = { isTwoColumnView = it }
             )
@@ -141,58 +142,125 @@ fun ChecklistView(
     onCheckedChange: () -> Unit,
     onDeleteList: () -> Unit
 ) {
+    val rowHeight = 48.dp
+    val totalRows = checklist.myCheckListElements.size
+    val maxVisibleItems = 4
+
     Card(
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .height(200.dp) // Fixed height for scrolling
             .padding(6.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            // Header row remains the same
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 4.dp, vertical = 0.dp)
+            ) {
                 Icon(
-                    imageVector = checklist.icon, // Use ImageVector for Material Icons
+                    imageVector = checklist.icon,
                     contentDescription = null,
-                    modifier = Modifier.size(24.dp).padding(end = 8.dp)
+                    modifier = Modifier.size(24.dp)
                 )
-                Text(text = checklist.name, style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
-
+                Text(
+                    text = checklist.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.weight(1f)
+                )
+                // Complete all, Delete, Edit Buttons
                 IconButton(onClick = onDeleteList) {
-                    Icon(imageVector = Icons.Filled.Delete, contentDescription = "Slett liste")
+                    Icon(
+                        imageVector = Icons.Filled.DoneAll,
+                        contentDescription = "Complete all tasks"
+                    )
+                }
+                IconButton(onClick = onDeleteList) {
+                    Icon(
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = "Slett liste"
+                    )
+                }
+                IconButton(onClick = onDeleteList) {
+                    Icon(
+                        imageVector = Icons.Filled.Edit,
+                        contentDescription = "Edit list"
+                    )
                 }
             }
-            Spacer(modifier = Modifier.height(1.dp))
-            LazyColumn {
-                items(checklist.myCheckListElements.size) { index ->
-                    val element = checklist.myCheckListElements[index]
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                // Toggle checked state properly
-                                element.checked = !element.checked
-                                onCheckedChange()
-                            }
-//                            .padding(vertical = 2.dp)
-                    ) {
-                        Switch(
-                            modifier = Modifier.scale(0.7f),
-                            checked = element.checked,
-                            onCheckedChange = {
-                                element.checked = it
-                                onCheckedChange()
-                            }
-                        )
-
-                        Text(text = element.text, style = MaterialTheme.typography.bodyMedium)
+            // Use a Column for few items, and a LazyColumn when there are more than maxVisibleItems
+            if (totalRows <= maxVisibleItems) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    checklist.myCheckListElements.forEach { element ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(rowHeight)
+                                .clickable {
+                                    element.checked = !element.checked
+                                    onCheckedChange()
+                                }
+                        ) {
+                            Switch(
+                                modifier = Modifier.scale(0.6f),
+                                checked = element.checked,
+                                onCheckedChange = {
+                                    element.checked = it
+                                    onCheckedChange()
+                                }
+                            )
+                            Text(
+                                text = element.text,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    }
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        // Fix the height to show exactly maxVisibleItems rows
+                        .height(rowHeight * maxVisibleItems),
+                    verticalArrangement = Arrangement.spacedBy(0.dp)
+                ) {
+                    items(checklist.myCheckListElements.size) { index ->
+                        val element = checklist.myCheckListElements[index]
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(rowHeight)
+                                .clickable {
+                                    element.checked = !element.checked
+                                    onCheckedChange()
+                                }
+                        ) {
+                            Switch(
+                                modifier = Modifier.scale(0.6f),
+                                checked = element.checked,
+                                onCheckedChange = {
+                                    element.checked = it
+                                    onCheckedChange()
+                                }
+                            )
+                            Text(
+                                text = element.text,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
                     }
                 }
             }
         }
     }
 }
+
+
 
 class DataSource {
     fun loadDemoCheckLists(): List<MyCheckList> {
@@ -202,13 +270,13 @@ class DataSource {
                 icon = Icons.Filled.Face,
                 myCheckListElements = mutableListOf(
                     MyCheckListElement("Kjøp melk", false),
-                    MyCheckListElement("Kjøp brød", true),
-                    MyCheckListElement("Kjøp smør", false),
-                    MyCheckListElement("Kjøp ost", true),
-                    MyCheckListElement("Kjøp skinke", false),
-                    MyCheckListElement("Kjøp syltetøy", true),
-                    MyCheckListElement("Kjøp knekkebrød", false),
-                    MyCheckListElement("Kjøp kaviar", true)
+//                    MyCheckListElement("Kjøp brød", true),
+//                    MyCheckListElement("Kjøp smør", false),
+//                    MyCheckListElement("Kjøp ost", true),
+//                    MyCheckListElement("Kjøp skinke", false),
+//                    MyCheckListElement("Kjøp syltetøy", true),
+//                    MyCheckListElement("Kjøp knekkebrød", false),
+//                    MyCheckListElement("Kjøp kaviar", true)
                 )
             ),
             MyCheckList(
