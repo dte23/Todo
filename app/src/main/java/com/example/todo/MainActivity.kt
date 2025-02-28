@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.layout.navigationBarsPadding
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,7 +65,11 @@ fun ChecklistApp() {
     // Store expanded state for each checklist by index.
     val expandedStates = remember { mutableStateMapOf<Int, Boolean>() }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
         // Global Header
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -99,9 +104,12 @@ fun ChecklistApp() {
                 onCheckedChange = { isTwoColumnView = it }
             )
         }
-        Text("Lister: $listCounter | Fullførte oppgaver: $checkedCounter")
-
-        // Wrap the checklist list in a Box with weight(1f) so that it occupies only the remaining space.
+        // Updated text: showing completed tasks out of the total tasks.
+        Text(
+            text = "Fullførte oppgaver: $checkedCounter av ${checklists.sumOf { it.myCheckListElements.size }}",
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
+        // Main content area takes up the remaining space.
         Box(modifier = Modifier.weight(1f)) {
             if (isTwoColumnView) {
                 LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.fillMaxSize()) {
@@ -147,6 +155,15 @@ fun ChecklistApp() {
                 }
             }
         }
+        // Lister text at the bottom, with navigation bar padding.
+        Text(
+            text = "Lister: $listCounter",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+                .navigationBarsPadding(),
+            textAlign = TextAlign.Center
+        )
     }
 }
 
