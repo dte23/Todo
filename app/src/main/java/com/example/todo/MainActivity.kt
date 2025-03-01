@@ -87,7 +87,7 @@ fun ChecklistApp() {
                 textAlign = TextAlign.Center
             )
         }
-        // Two-column switch row
+        // "Vis som to kolonner" row
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center,
@@ -104,12 +104,29 @@ fun ChecklistApp() {
                 onCheckedChange = { isTwoColumnView = it }
             )
         }
-        // Updated text: showing completed tasks out of the total tasks.
-        Text(
-            text = "Fullførte oppgaver: $checkedCounter av ${checklists.sumOf { it.myCheckListElements.size }}",
-            modifier = Modifier.align(Alignment.CenterHorizontally)
+        // Divider Header
+        HorizontalDivider(
+            thickness = 2.dp,
+            modifier = Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.outline
         )
-        // Main content area takes up the remaining space.
+        // Placeholder button row (no extra space added)
+        Button(
+            onClick = { /* Placeholder action */ },
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .fillMaxWidth()
+                .padding(4.dp)
+        ) {
+            Text(text = "Placeholder button")
+        }
+        // "Fullførte oppgaver" row
+        Text(
+            text = "$checkedCounter av ${checklists.sumOf { it.myCheckListElements.size }} er utført",
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            fontSize = 18.sp
+        )
+        // Grid med lister av oppgaver
         Box(modifier = Modifier.weight(1f)) {
             if (isTwoColumnView) {
                 LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.fillMaxSize()) {
@@ -155,17 +172,29 @@ fun ChecklistApp() {
                 }
             }
         }
+        Spacer(modifier = Modifier
+            .height(4.dp)
+        )
+        HorizontalDivider(
+            thickness = 2.dp,
+            modifier = Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.outline
+        )
         // Lister text at the bottom, with navigation bar padding.
         Text(
-            text = "Lister: $listCounter",
+            text = "Totalt $listCounter lister.",
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp)
                 .navigationBarsPadding(),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            fontSize = 18.sp
         )
     }
 }
+
+
+
 
 
 
