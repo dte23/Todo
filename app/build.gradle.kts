@@ -57,7 +57,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    implementation(libs.androidx.material.icons.extended.v143) // icon pack instead of vetex
-
+    implementation(libs.androidx.material.icons.extended.v143) // icon pack istedet for  vertex objects
+    implementation(libs.androidx.foundation) // mulig replacement for navbar padding
 }
 

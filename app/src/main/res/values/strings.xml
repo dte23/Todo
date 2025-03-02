@@ -1,3 +1,29 @@
 <resources>
     <string name="app_name">Todo</string>
+
+    <string name="temp_checklist_name">Temp</string>
+
+    <!-- random checklist !-->
+    <string-array name="task_strings">
+        <item>Skriv søknad</item>
+        <item>Send søknad</item>
+        <item>Få jobb</item>
+        <item>Jobb hardt</item>
+        <item>Få lønn</item>
+        <item>Kjøp hus</item>
+        <item>Husk å vaske kjøkkenet</item>
+        <item>Husk å vaske badet</item>
+        <item>Husk å vaske stua</item>
+        <item>Husk å vaske soverommet</item>
+        <item>Gjør matteoppgaver</item>
+        <item>Gjør fysikkoppgaver</item>
+        <item>Gjør kjemioppgaver</item>
+        <item>Gjør biooppgaver</item>
+        <item>Lag middag</item>
+        <item>Spis middag</item>
+        <item>Vask opp</item>
+        <item>Gå tur</item>
+        <item>Se på TV</item>
+    </string-array>
 </resources>
+
