@@ -1,5 +1,6 @@
 package com.example.todo
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,6 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -112,7 +115,7 @@ fun AppHeader() {
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = "MineHuskelister",
+            text = stringResource(id = R.string.app_title),
             fontSize = 22.sp,
             textAlign = TextAlign.Center
         )
@@ -127,7 +130,7 @@ fun ToggleRow(isTwoColumnView: Boolean, onToggle: (Boolean) -> Unit) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Vis som to kolonner",
+            text = stringResource(id = R.string.two_column_text),
             modifier = Modifier.padding(8.dp),
             fontSize = 16.sp
         )
@@ -141,8 +144,9 @@ fun ToggleRow(isTwoColumnView: Boolean, onToggle: (Boolean) -> Unit) {
 
 @Composable
 fun ChecklistApp() {
+    val context = LocalContext.current
     var isTwoColumnView by remember { mutableStateOf(false) }
-    var checklists by remember { mutableStateOf(DataSource().loadDemoCheckLists()) }
+    var checklists by remember { mutableStateOf(DataSource(context).loadDemoCheckLists()) }
     var listCounter by remember { mutableIntStateOf(checklists.size) }
     var checkedCounter by remember {
         mutableIntStateOf(
@@ -166,22 +170,30 @@ fun ChecklistApp() {
         )
         Button(
             onClick = {
-                val checklist = newChecklist()
-                val updatedChecklist = checklist.copy(name = "Random sjekkliste $counter")
+                val checklist = newChecklist(context)
+                val updatedChecklist = checklist.copy(
+                    name = context.getString(R.string.random_checklist, counter)
+                )
                 counter++
                 checklists = checklists.toMutableList().apply { add(updatedChecklist) }
                 listCounter = checklists.size
-                checkedCounter = checklists.sumOf { cl -> cl.myCheckListElements.count { item -> item.checked } }
+                checkedCounter = checklists.sumOf { cl ->
+                    cl.myCheckListElements.count { item -> item.checked }
+                }
             },
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .fillMaxWidth()
                 .padding(4.dp)
         ) {
-            Text(text = "Legg til ny sjekkliste")
+            Text(text = stringResource(id = R.string.add_checklist))
         }
         Text(
-            text = "$checkedCounter av ${checklists.sumOf { cl -> cl.myCheckListElements.size }} er utført",
+            text = stringResource(
+                id = R.string.completed_counter,
+                checkedCounter,
+                checklists.sumOf { cl -> cl.myCheckListElements.size }
+            ),
             modifier = Modifier.align(Alignment.CenterHorizontally),
             fontSize = 18.sp
         )
@@ -191,12 +203,16 @@ fun ChecklistApp() {
                 isTwoColumnView = isTwoColumnView,
                 expandedStates = expandedStates,
                 onCheckedChange = { _ ->
-                    checkedCounter = checklists.sumOf { cl -> cl.myCheckListElements.count { item -> item.checked } }
+                    checkedCounter = checklists.sumOf { cl ->
+                        cl.myCheckListElements.count { item -> item.checked }
+                    }
                 },
                 onDeleteList = { index ->
                     checklists = checklists.toMutableList().apply { removeAt(index) }
                     listCounter = checklists.size
-                    checkedCounter = checklists.sumOf { cl -> cl.myCheckListElements.count { item -> item.checked } }
+                    checkedCounter = checklists.sumOf { cl ->
+                        cl.myCheckListElements.count { item -> item.checked }
+                    }
                 },
                 onToggleExpanded = { index ->
                     expandedStates[index] = !expandedStates[index]!!
@@ -209,7 +225,7 @@ fun ChecklistApp() {
             color = MaterialTheme.colorScheme.outline
         )
         Text(
-            text = "Totalt $listCounter lister.",
+            text = stringResource(id = R.string.total_lists, listCounter),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp)
@@ -228,12 +244,12 @@ fun DeleteConfirmationDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Delete list: $checklistName?") },
+        title = { Text(stringResource(id = R.string.delete_title, checklistName)) },
         confirmButton = {
             TextButton(onClick = onConfirm) {
                 Icon(
                     imageVector = Icons.Filled.Done,
-                    contentDescription = "Delete confirm"
+                    contentDescription = "Slett bekreft"
                 )
             }
         },
@@ -241,7 +257,7 @@ fun DeleteConfirmationDialog(
             TextButton(onClick = onDismiss) {
                 Icon(
                     imageVector = Icons.Filled.Close,
-                    contentDescription = "Delete dismiss"
+                    contentDescription = "Avbryt sletting"
                 )
             }
         }
@@ -262,7 +278,7 @@ fun ChecklistHeader(
     ) {
         Icon(
             imageVector = checklist.icon,
-            contentDescription = null,
+            contentDescription = "Ikon for sjekkliste",
             modifier = Modifier.size(24.dp)
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -275,12 +291,12 @@ fun ChecklistHeader(
             if (isExpanded) {
                 Icon(
                     imageVector = Icons.Filled.KeyboardArrowUp,
-                    contentDescription = "Collapse checklist"
+                    contentDescription = "Lukk sjekkliste"
                 )
             } else {
                 Icon(
                     imageVector = Icons.Filled.KeyboardArrowDown,
-                    contentDescription = "Expand checklist"
+                    contentDescription = "Åpne sjekkliste"
                 )
             }
         }
@@ -380,25 +396,24 @@ fun ChecklistFooter(
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onClick = {
-            // Complete alle oppgaver i listen
             checklist.myCheckListElements.forEach { it.checked = true }
             onCheckedChange()
         }) {
             Icon(
                 imageVector = Icons.Filled.DoneAll,
-                contentDescription = "Complete all tasks"
+                contentDescription = "Fullfør alle oppgaver"
             )
         }
         IconButton(onClick = onDeleteList) {
             Icon(
                 imageVector = Icons.Filled.Delete,
-                contentDescription = "Delete checklist"
+                contentDescription = "Slett sjekkliste"
             )
         }
-        // Edit ikonet men ikke lagt til funksjonalitet
+        // Static edit icon (non-clickable)
         Icon(
             imageVector = Icons.Filled.Edit,
-            contentDescription = "Edit checklist"
+            contentDescription = "Rediger sjekkliste"
         )
     }
 }
@@ -455,92 +470,72 @@ fun ChecklistView(
     }
 }
 
-fun newChecklist(): MyCheckList {
-    val tasks = listOf(
-        "Skriv søknad",
-        "Send søknad",
-        "Få jobb",
-        "Jobb hardt",
-        "Få lønn",
-        "Kjøp hus",
-        "Husk å vaske kjøkkenet",
-        "Husk å vaske badet",
-        "Husk å vaske stua",
-        "Husk å vaske soverommet",
-        "Gjør matteoppgaver",
-        "Gjør fysikkoppgaver",
-        "Gjør kjemioppgaver",
-        "Gjør biooppgaver",
-        "Lag middag",
-        "Spis middag",
-        "Vask opp",
-        "Gå tur",
-        "Se på TV"
-    )
-
+fun newChecklist(context: Context): MyCheckList {
+    // Load default tasks from the string-array resource
+    val tasks = context.resources.getStringArray(R.array.default_tasks).toList()
     val randomElements = tasks.shuffled().take(4)
     val checklistElements = randomElements.map {
         MyCheckListElement(it, Random.nextBoolean())
     }.toMutableList()
 
     return MyCheckList(
-        name = "Liste fra Legg til ny sjekkliste",
+        name = context.getString(R.string.new_checklist_name),
         icon = Icons.Filled.Adb,
         myCheckListElements = checklistElements
     )
 }
 
-class DataSource {
+class DataSource(private val context: Context) {
     fun loadDemoCheckLists(): List<MyCheckList> {
         return listOf(
             MyCheckList(
-                name = "Min todo-liste",
+                name = context.getString(R.string.todo_list),
                 icon = Icons.Filled.Face,
                 myCheckListElements = mutableListOf(
-                    MyCheckListElement("Kjøp melk", false)
+                    MyCheckListElement(context.getString(R.string.buy_milk), false)
                 )
             ),
             MyCheckList(
-                name = "Husvask",
+                name = context.getString(R.string.house_cleaning),
                 icon = Icons.Filled.CleaningServices,
                 myCheckListElements = mutableListOf(
-                    MyCheckListElement("Skriv søknad", false),
-                    MyCheckListElement("Send søknad", true),
-                    MyCheckListElement("Få jobb", false),
-                    MyCheckListElement("Jobb hardt", true),
-                    MyCheckListElement("Få lønn", false),
-                    MyCheckListElement("Kjøp hus", true)
+                    MyCheckListElement(context.getString(R.string.task_write_application), false),
+                    MyCheckListElement(context.getString(R.string.task_send_application), true),
+                    MyCheckListElement(context.getString(R.string.task_get_job), false),
+                    MyCheckListElement(context.getString(R.string.task_work_hard), true),
+                    MyCheckListElement(context.getString(R.string.task_get_salary), false),
+                    MyCheckListElement(context.getString(R.string.task_buy_house), true)
                 )
             ),
             MyCheckList(
-                name = "Studieplan",
+                name = context.getString(R.string.study_plan),
                 icon = Icons.Filled.School,
                 myCheckListElements = mutableListOf(
-                    MyCheckListElement("Husk å vaske kjøkkenet", false),
-                    MyCheckListElement("Husk å vaske badet", true),
-                    MyCheckListElement("Husk å vaske stua", false),
-                    MyCheckListElement("Husk å vaske soverommet", true)
+                    MyCheckListElement(context.getString(R.string.task_clean_kitchen), false),
+                    MyCheckListElement(context.getString(R.string.task_clean_bathroom), true),
+                    MyCheckListElement(context.getString(R.string.task_clean_livingroom), false),
+                    MyCheckListElement(context.getString(R.string.task_clean_bedroom), true)
                 )
             ),
             MyCheckList(
-                name = "Middagsplan",
+                name = context.getString(R.string.dinner_plan),
                 icon = Icons.Filled.Dining,
                 myCheckListElements = mutableListOf(
-                    MyCheckListElement("Gjør matteoppgaver", true),
-                    MyCheckListElement("Gjør fysikkoppgaver", true),
-                    MyCheckListElement("Gjør kjemioppgaver", true),
-                    MyCheckListElement("Gjør biooppgaver", true)
+                    MyCheckListElement(context.getString(R.string.task_math_homework), true),
+                    MyCheckListElement(context.getString(R.string.task_physics_homework), true),
+                    MyCheckListElement(context.getString(R.string.task_chemistry_homework), true),
+                    MyCheckListElement(context.getString(R.string.task_biology_homework), true)
                 )
             ),
             MyCheckList(
-                name = "Handleliste",
+                name = context.getString(R.string.shopping_list),
                 icon = Icons.Filled.ShoppingCart,
                 myCheckListElements = mutableListOf(
-                    MyCheckListElement("Lag middag", true),
-                    MyCheckListElement("Spis middag", true),
-                    MyCheckListElement("Vask opp", true),
-                    MyCheckListElement("Gå tur", true),
-                    MyCheckListElement("Se på TV", true)
+                    MyCheckListElement(context.getString(R.string.task_cook_dinner), true),
+                    MyCheckListElement(context.getString(R.string.task_eat_dinner), true),
+                    MyCheckListElement(context.getString(R.string.task_wash_dishes), true),
+                    MyCheckListElement(context.getString(R.string.task_go_for_walk), true),
+                    MyCheckListElement(context.getString(R.string.task_watch_tv), true)
                 )
             )
         )

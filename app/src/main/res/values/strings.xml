@@ -1,29 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Todo</string>
+    <!-- App Titles and Headers -->
+    <string name="app_name">MineHuskelister</string>
+    <string name="app_title">MineHuskelister</string>
+    <string name="two_column_text">Vis som to kolonner</string>
 
-    <string name="temp_checklist_name">Temp</string>
+    <!-- Buttons and Actions -->
+    <string name="add_checklist">Legg til ny sjekkliste</string>
+    <string name="random_checklist">Random sjekkliste %1$d</string>
 
-    <!-- random checklist !-->
-    <string-array name="task_strings">
-        <item>Skriv søknad</item>
-        <item>Send søknad</item>
-        <item>Få jobb</item>
-        <item>Jobb hardt</item>
-        <item>Få lønn</item>
-        <item>Kjøp hus</item>
-        <item>Husk å vaske kjøkkenet</item>
-        <item>Husk å vaske badet</item>
-        <item>Husk å vaske stua</item>
-        <item>Husk å vaske soverommet</item>
-        <item>Gjør matteoppgaver</item>
-        <item>Gjør fysikkoppgaver</item>
-        <item>Gjør kjemioppgaver</item>
-        <item>Gjør biooppgaver</item>
-        <item>Lag middag</item>
-        <item>Spis middag</item>
-        <item>Vask opp</item>
-        <item>Gå tur</item>
-        <item>Se på TV</item>
-    </string-array>
+    <!-- Counters and Totals -->
+    <string name="completed_counter">%1$d av %2$d er utført</string>
+    <string name="total_lists">Totalt %1$d lister.</string>
+
+    <!-- Delete Confirmation -->
+    <string name="delete_title">Slett liste: %1$s?</string>
+
+    <!-- Checklist Names -->
+    <string name="new_checklist_name">Liste fra Legg til ny sjekkliste</string>
+    <string name="todo_list">Min todo-liste</string>
+    <string name="house_cleaning">Husvask</string>
+    <string name="study_plan">Studieplan</string>
+    <string name="dinner_plan">Middagsplan</string>
+    <string name="shopping_list">Handleliste</string>
+
+    <!-- Task Specific -->
+    <string name="buy_milk">Kjøp melk</string>
+    <string name="task_write_application">Skriv søknad</string>
+    <string name="task_send_application">Send søknad</string>
+    <string name="task_get_job">Få jobb</string>
+    <string name="task_work_hard">Jobb hardt</string>
+    <string name="task_get_salary">Få lønn</string>
+    <string name="task_buy_house">Kjøp hus</string>
+    <string name="task_clean_kitchen">Husk å vaske kjøkkenet</string>
+    <string name="task_clean_bathroom">Husk å vaske badet</string>
+    <string name="task_clean_livingroom">Husk å vaske stua</string>
+    <string name="task_clean_bedroom">Husk å vaske soverommet</string>
+    <string name="task_math_homework">Gjør matteoppgaver</string>
+    <string name="task_physics_homework">Gjør fysikkoppgaver</string>
+    <string name="task_chemistry_homework">Gjør kjemioppgaver</string>
+    <string name="task_biology_homework">Gjør biooppgaver</string>
+    <string name="task_cook_dinner">Lag middag</string>
+    <string name="task_eat_dinner">Spis middag</string>
+    <string name="task_wash_dishes">Vask opp</string>
+    <string name="task_go_for_walk">Gå tur</string>
+    <string name="task_watch_tv">Se på TV</string>
 </resources>
-
